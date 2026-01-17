@@ -41,7 +41,7 @@
     "shortDescription": "Play with APIs, intuitively",
     "targets": [
       "app",
-      "deb",
+      "deb"
     ],
     "macOS": {
       "minimumSystemVersion": "13.0",
