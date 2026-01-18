@@ -65,7 +65,7 @@ rmSync(tmpDir, { recursive: true, force: true });
   const { filePath } = await new Downloader({
     url,
     directory: tmpDir,
-    timeout: 1000 * 60 * 2,
+    timeout: 1000 * 60 * 10,
   }).download();
 
   // Decompress to the same directory

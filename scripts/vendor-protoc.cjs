@@ -61,7 +61,7 @@ mkdirSync(dstDir, { recursive: true });
 
 (async function () {
   // Download GitHub release artifact
-  const { filePath } = await new Downloader({ url, directory: tmpDir }).download();
+  const { filePath } = await new Downloader({ url, directory: tmpDir, timeout: 1000 * 60 * 10 }).download();
 
   // Decompress to the same directory
   await decompress(filePath, tmpDir, {});

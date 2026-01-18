@@ -4,6 +4,22 @@ export function __wbg_set_wasm(val) {
 }
 
 
+function logError(f, args) {
+    try {
+        return f.apply(this, args);
+    } catch (e) {
+        let error = (function () {
+            try {
+                return e instanceof Error ? `${e.message}\n\nStack:\n${e.stack}` : e.toString();
+            } catch(_) {
+                return "<failed to stringify thrown value>";
+            }
+        }());
+        console.error("wasm-bindgen: imported JS function that was not marked as `catch` threw an error:", error);
+        throw e;
+    }
+}
+
 function debugString(val) {
     // primitive types
     const type = typeof val;
@@ -99,6 +115,8 @@ const encodeString = (typeof cachedTextEncoder.encodeInto === 'function'
 
 function passStringToWasm0(arg, malloc, realloc) {
 
+    if (typeof(arg) !== 'string') throw new Error(`expected a string argument, found ${typeof(arg)}`);
+
     if (realloc === undefined) {
         const buf = cachedTextEncoder.encode(arg);
         const ptr = malloc(buf.length, 1) >>> 0;
@@ -127,7 +145,7 @@ function passStringToWasm0(arg, malloc, realloc) {
         ptr = realloc(ptr, len, len = offset + arg.length * 3, 1) >>> 0;
         const view = getUint8ArrayMemory0().subarray(ptr + offset, ptr + len);
         const ret = encodeString(arg, view);
-
+        if (ret.read !== arg.length) throw new Error('failed to pass whole string');
         offset += ret.written;
         ptr = realloc(ptr, len, offset, 1) >>> 0;
     }
@@ -179,20 +197,6 @@ export function unescape_template(template) {
  * @param {string} template
  * @returns {any}
  */
-export function parse_template(template) {
-    const ptr0 = passStringToWasm0(template, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-    const len0 = WASM_VECTOR_LEN;
-    const ret = wasm.parse_template(ptr0, len0);
-    if (ret[2]) {
-        throw takeFromExternrefTable0(ret[1]);
-    }
-    return takeFromExternrefTable0(ret[0]);
-}
-
-/**
- * @param {string} template
- * @returns {any}
- */
 export function escape_template(template) {
     const ptr0 = passStringToWasm0(template, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     const len0 = WASM_VECTOR_LEN;
@@ -203,23 +207,37 @@ export function escape_template(template) {
     return takeFromExternrefTable0(ret[0]);
 }
 
-export function __wbg_new_405e22f390576ce2() {
+/**
+ * @param {string} template
+ * @returns {any}
+ */
+export function parse_template(template) {
+    const ptr0 = passStringToWasm0(template, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.parse_template(ptr0, len0);
+    if (ret[2]) {
+        throw takeFromExternrefTable0(ret[1]);
+    }
+    return takeFromExternrefTable0(ret[0]);
+}
+
+export function __wbg_new_405e22f390576ce2() { return logError(function () {
     const ret = new Object();
     return ret;
-};
+}, arguments) };
 
-export function __wbg_new_78feb108b6472713() {
+export function __wbg_new_78feb108b6472713() { return logError(function () {
     const ret = new Array();
     return ret;
-};
+}, arguments) };
 
-export function __wbg_set_37837023f3d740e8(arg0, arg1, arg2) {
+export function __wbg_set_37837023f3d740e8() { return logError(function (arg0, arg1, arg2) {
     arg0[arg1 >>> 0] = arg2;
-};
+}, arguments) };
 
-export function __wbg_set_3f1d0b984ed272ed(arg0, arg1, arg2) {
+export function __wbg_set_3f1d0b984ed272ed() { return logError(function (arg0, arg1, arg2) {
     arg0[arg1] = arg2;
-};
+}, arguments) };
 
 export function __wbindgen_debug_string(arg0, arg1) {
     const ret = debugString(arg1);
